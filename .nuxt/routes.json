@@ -1,0 +1,26 @@
+[
+  {
+    "path": "/",
+    "component": "H:\\\\前端进阶\\\\作业\\\\fed-e-task-03-03\\\\code\\\\realworld-nuxtjs\\\\pages\\\\layout",
+    "children": [
+      {
+        "path": "",
+        "component": "H:\\\\前端进阶\\\\作业\\\\fed-e-task-03-03\\\\code\\\\realworld-nuxtjs\\\\pages\\\\home",
+        "_name": "_66b138ce"
+      },
+      {
+        "name": "login",
+        "path": "/login",
+        "component": "H:\\\\前端进阶\\\\作业\\\\fed-e-task-03-03\\\\code\\\\realworld-nuxtjs\\\\pages\\\\login",
+        "_name": "_6f055022"
+      },
+      {
+        "name": "regsister",
+        "path": "/regsister",
+        "component": "H:\\\\前端进阶\\\\作业\\\\fed-e-task-03-03\\\\code\\\\realworld-nuxtjs\\\\pages\\\\login",
+        "_name": "_6f055022"
+      }
+    ],
+    "_name": "_4670a364"
+  }
+]

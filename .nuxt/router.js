@@ -6,6 +6,10 @@ import scrollBehavior from './router.scrollBehavior.js'
 const _4670a364 = () => interopDefault(import('..\\pages\\layout' /* webpackChunkName: "" */))
 const _66b138ce = () => interopDefault(import('..\\pages\\home' /* webpackChunkName: "" */))
 const _6f055022 = () => interopDefault(import('..\\pages\\login' /* webpackChunkName: "" */))
+const _77ade8af = () => interopDefault(import('..\\pages\\profile' /* webpackChunkName: "" */))
+const _0f4f3ddd = () => interopDefault(import('..\\pages\\settings' /* webpackChunkName: "" */))
+const _3aa1c9a7 = () => interopDefault(import('..\\pages\\editor' /* webpackChunkName: "" */))
+const _5e782bfc = () => interopDefault(import('..\\pages\\article' /* webpackChunkName: "" */))
 
 // TODO: remove in Nuxt 3
 const emptyFn = () => {}
@@ -19,7 +23,7 @@ Vue.use(Router)
 export const routerOptions = {
   mode: 'history',
   base: decodeURI('/'),
-  linkActiveClass: 'nuxt-link-active',
+  linkActiveClass: 'active',
   linkExactActiveClass: 'nuxt-link-exact-active',
   scrollBehavior,
 
@@ -28,7 +32,8 @@ export const routerOptions = {
     component: _4670a364,
     children: [{
       path: "",
-      component: _66b138ce
+      component: _66b138ce,
+      name: "home"
     }, {
       path: "/login",
       component: _6f055022,
@@ -37,6 +42,22 @@ export const routerOptions = {
       path: "/regsister",
       component: _6f055022,
       name: "regsister"
+    }, {
+      path: "/profile/:username",
+      component: _77ade8af,
+      name: "profile"
+    }, {
+      path: "/settings",
+      component: _0f4f3ddd,
+      name: "settings"
+    }, {
+      path: "/editor",
+      component: _3aa1c9a7,
+      name: "editor"
+    }, {
+      path: "/article/:slug",
+      component: _5e782bfc,
+      name: "article"
     }]
   }],
 

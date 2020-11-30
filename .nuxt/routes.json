@@ -4,6 +4,7 @@
     "component": "H:\\\\前端进阶\\\\作业\\\\fed-e-task-03-03\\\\code\\\\realworld-nuxtjs\\\\pages\\\\layout",
     "children": [
       {
+        "name": "home",
         "path": "",
         "component": "H:\\\\前端进阶\\\\作业\\\\fed-e-task-03-03\\\\code\\\\realworld-nuxtjs\\\\pages\\\\home",
         "_name": "_66b138ce"
@@ -19,6 +20,30 @@
         "path": "/regsister",
         "component": "H:\\\\前端进阶\\\\作业\\\\fed-e-task-03-03\\\\code\\\\realworld-nuxtjs\\\\pages\\\\login",
         "_name": "_6f055022"
+      },
+      {
+        "name": "profile",
+        "path": "/profile/:username",
+        "component": "H:\\\\前端进阶\\\\作业\\\\fed-e-task-03-03\\\\code\\\\realworld-nuxtjs\\\\pages\\\\profile",
+        "_name": "_77ade8af"
+      },
+      {
+        "name": "settings",
+        "path": "/settings",
+        "component": "H:\\\\前端进阶\\\\作业\\\\fed-e-task-03-03\\\\code\\\\realworld-nuxtjs\\\\pages\\\\settings",
+        "_name": "_0f4f3ddd"
+      },
+      {
+        "name": "editor",
+        "path": "/editor",
+        "component": "H:\\\\前端进阶\\\\作业\\\\fed-e-task-03-03\\\\code\\\\realworld-nuxtjs\\\\pages\\\\editor",
+        "_name": "_3aa1c9a7"
+      },
+      {
+        "name": "article",
+        "path": "/article/:slug",
+        "component": "H:\\\\前端进阶\\\\作业\\\\fed-e-task-03-03\\\\code\\\\realworld-nuxtjs\\\\pages\\\\article",
+        "_name": "_5e782bfc"
       }
     ],
     "_name": "_4670a364"

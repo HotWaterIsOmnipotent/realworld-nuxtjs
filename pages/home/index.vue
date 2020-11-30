@@ -14,65 +14,137 @@
         <div class="feed-toggle">
           <ul class="nav nav-pills outline-active">
             <li class="nav-item">
-              <a class="nav-link disabled" href="">Your Feed</a>
+              <nuxt-link
+                v-if="user"
+                class="nav-link disabled"
+                :to="{
+                  name: 'home',
+                  query: {
+                    tab: 'your_feed'
+                  }
+                }"
+                :class="{
+                  active: tab === 'your_feed'
+                }"
+                exact
+                >Your Feed</nuxt-link>
             </li>
             <li class="nav-item">
-              <a class="nav-link active" href="">Global Feed</a>
+              <nuxt-link
+                class="nav-link"
+                :to="{
+                  name: 'home',
+                  query: {
+                    tab: 'global_feed'
+                  }
+                }"
+                :class="{
+                  active: tab === 'global_feed'
+                }"
+                exact
+                >Global Feed</nuxt-link>
+            </li>
+            <li v-if="tag" class="nav-item">
+              <nuxt-link
+                class="nav-link"
+                :class="{
+                  active: tab === 'tag'
+                }"
+                :to="{
+                  tab: 'tag',
+                  tag
+                }"
+              >#{{ tag }}</nuxt-link>
             </li>
           </ul>
         </div>
 
-        <div class="article-preview">
+        <div class="article-preview" v-for="article in articles" :key="article.slug">
           <div class="article-meta">
-            <a href="profile.html"><img src="http://i.imgur.com/Qr71crq.jpg" /></a>
+            <nuxt-link 
+              :to="{
+                name: 'profile',
+                params: {
+                  username: article.author.username
+                }
+              }"
+              ><img :src="article.author.image" /></nuxt-link>
             <div class="info">
-              <a href="" class="author">Eric Simons</a>
-              <span class="date">January 20th</span>
+              <nuxt-link
+              class="author"
+              :to="{
+                name: 'profile',
+                params: {
+                  username: article.author.username
+                }
+              }"
+              >{{ article.author.username }}</nuxt-link>
+              <span class="date">{{ article.updatedAt | date('MMM DD, YYYY') }}</span>
             </div>
-            <button class="btn btn-outline-primary btn-sm pull-xs-right">
-              <i class="ion-heart"></i> 29
+            <button
+              class="btn btn-outline-primary btn-sm pull-xs-right"
+              :class="{active: article.favorited}"
+              @click="onFavorite(article)"
+              :disabled="article.favoriteDisabled"
+            >
+              <i class="ion-heart"></i> {{ article.favoritesCount }}
             </button>
           </div>
-          <a href="" class="preview-link">
-            <h1>How to build webapps that scale</h1>
-            <p>This is the description for the post.</p>
+          <nuxt-link
+            :to="{
+              name: 'article',
+              params: {
+                slug: article.slug
+              }
+            }"
+            class="preview-link"
+          >
+            <h1>{{ article.title }}</h1>
+            <p>{{ article.body }}</p>
             <span>Read more...</span>
-          </a>
+          </nuxt-link>
         </div>
-
-        <div class="article-preview">
-          <div class="article-meta">
-            <a href="profile.html"><img src="http://i.imgur.com/N4VcUeJ.jpg" /></a>
-            <div class="info">
-              <a href="" class="author">Albert Pai</a>
-              <span class="date">January 20th</span>
-            </div>
-            <button class="btn btn-outline-primary btn-sm pull-xs-right">
-              <i class="ion-heart"></i> 32
-            </button>
-          </div>
-          <a href="" class="preview-link">
-            <h1>The song you won't ever stop singing. No matter how hard you try.</h1>
-            <p>This is the description for the post.</p>
-            <span>Read more...</span>
-          </a>
-        </div>
-
       </div>
-
+      <nav>
+        <ul class="pagination">
+          <li
+            class="page-item ng-scope"
+            :class="{
+              active: pageNum === page
+            }"
+            v-for="pageNum in totalPages"
+            :key="pageNum"
+          >
+            <nuxt-link
+              class="page-link ng-binding"
+              :to="{
+                name: 'home',
+                query: {
+                  page: pageNum,
+                  tag: $route.query.tag,
+                  tab
+                }
+              }"
+            >{{ pageNum }}</nuxt-link>
+          </li>
+        </ul>
+      </nav>
       <div class="col-md-3">
         <div class="sidebar">
           <p>Popular Tags</p>
-
           <div class="tag-list">
-            <a href="" class="tag-pill tag-default">programming</a>
-            <a href="" class="tag-pill tag-default">javascript</a>
-            <a href="" class="tag-pill tag-default">emberjs</a>
-            <a href="" class="tag-pill tag-default">angularjs</a>
-            <a href="" class="tag-pill tag-default">react</a>
-            <a href="" class="tag-pill tag-default">mean</a>
-            <a href="" class="tag-pill tag-default">node</a>
-            <a href="" class="tag-pill tag-default">rails</a>
+            <nuxt-link
+              v-for="tag in tags"
+              :key="tag"
+              :to="{
+                name: 'home',
+                query: {
+                  tag,
+                  tab: 'tag'
+                }
+              }"
+              class="tag-pill tag-default"
+            >{{ tag }}</nuxt-link>
           </div>
         </div>
       </div>
@@ -84,8 +156,64 @@
 </template>
 
 <script>
+import { getArticles, getArticlesFeed, feedFavorite, deleteFavorite } from '../../api/article';
+import { getTags } from '../../api/tags';
+import { mapState } from 'vuex';
+
 export default {
-  name: 'HomePage'
+  name: 'HomePage',
+
+  async asyncData( { query } ) {
+    const limit = 20;
+    const page = Number.parseInt(query.page || 1);
+    const { tag, tab="global_feed" } = query;
+
+    const loadArticleList = tab === 'your_feed' ? getArticlesFeed : getArticles
+    const [ articlesRes, tagsRes ] = await Promise.all([
+      loadArticleList({
+        limit,
+        offset: (page - 1) * limit,
+        tag,
+        tab
+      }),
+      getTags()
+    ])
+
+    const { articles, articlesCount } = articlesRes.data
+    const { tags } = tagsRes.data
+    articles.forEach(element => element.favoriteDisabled = false);
+    return {
+      articles,
+      articlesCount,
+      limit,
+      page,
+      tags,
+      tag,
+      tab
+    }
+  },
+  watchQuery: ['page', 'tag', 'tab'],
+  computed: {
+    ...mapState(['user']),
+    totalPages() {
+      return Math.ceil(this.articlesCount / this.limit)
+    }
+  },
+  methods: {
+    async onFavorite (article) {
+      article.favoriteDisabled = true
+      if(article.favorited) {
+        await deleteFavorite(article.slug)
+        article.favorited = false
+        article.favoritesCount--
+      } else {
+        await feedFavorite(article.slug)
+        article.favorited = true
+        article.favoritesCount++
+      }
+      article.favoriteDisabled = false
+    }
+  }
 }
 </script>
 
